@@ -1,0 +1,17 @@
+﻿@model List<ToplantiTakip.Domain.Concrete.EventDocument>
+<div class="form-group">
+    @Html.Label("Toplantı Dökümanı", htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-4">
+        <a class='btn' href='javascript:;'>
+            Dosya Seç...
+            <input type="file" name="image" id="image" size="40"
+                   style="position:absolute;z-index:2;top:0;
+                            left:0;filter: alpha(opacity=0); opacity:0;
+                            background-color:transparent;color:transparent;"
+                   onchange='$("#upload-file-info").html($(this).val());'>
+        </a>
+        <span class='label label-info' id="upload-file-info"></span>
+
+
+    </div>
+</div>

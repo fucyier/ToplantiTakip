@@ -1,0 +1,326 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        @Html.Label("Salon Adı", htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownList("RoomId1", (IEnumerable<SelectListItem>)ViewBag.RoomId, htmlAttributes: new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        <div id="calender"></div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+                <button id="btnDelete" class="btn btn-danger btn-sm pull-right">
+                    <span class="glyphicon glyphicon-remove"></span> Sil
+                </button>
+                <button id="btnEdit" class="btn btn-primary btn-sm pull-right" style="margin-right:5px;">
+                    <span class="glyphicon glyphicon-pencil"></span> Güncelle
+                </button>
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Toplantı Kayıt</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <input type="hidden" id="hdEventID" value="0" />
+                    <div class="form-group">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    </div>
+
+                    <label>Salon Adı</label>
+                    @Html.DropDownList("RoomId", (IEnumerable<SelectListItem>)ViewBag.RoomId, htmlAttributes: new { @class = "form-control" })
+
+                    <label>Toplantı Konusu</label>
+                    <input type="text" id="txtSubject" class="form-control" />
+
+                    <label>Toplantı Bilgisi</label>
+                    <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                    <label>Başlangıç Tarihi</label>
+                    <div class="input-group date" id="dtp1">
+                        <input type="text" id="txtStart" class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="chkIsFullDay" checked="checked" />  Tüm Gün </label>
+                    </div>
+
+                    <div id="divEndDate" style="display:none">
+                        <label>Bitiş Tarihi</label>
+                        <div class="input-group date" id="dtp2">
+                            <input type="text" id="txtEnd" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    @*<label>Tema Rengi</label>
+        <select id="ddThemeColor" class="form-control">
+            <option value="">Default</option>
+            <option value="red">Kırmızı</option>
+            <option value="orange">Turuncu</option>
+            <option value="green">Yeşil</option>
+        </select>*@
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnSave" class="btn btn-success">Kaydet</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+@section Scripts{
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>*@
+
+    <script src="~/Scripts/moment-with-locales.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/locale-all.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var events = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+
+            function FetchEventAndRenderCalendar() {
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetEvents","Home")",
+                    data: { roomId: $('#RoomId1').val() },
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                roomID: v.RoomId,
+                                // roomName: v.RoomName,
+                                eventID: v.EventId,
+                                title: v.EventSubject,
+                                description: v.EventInfo,
+                                start: moment(v.StartDate),
+                                end: v.EndDate != null ? moment(v.EndDate) : null,
+                                color: v.ThemeColor,
+                                allDay: v.IsFullDay
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        alert('failed FetchEventAndRenderCalendar');
+                    }
+                })
+            }
+
+            $('#RoomId1').change(function () {
+                FetchEventAndRenderCalendar();
+            })
+
+            function GenerateCalender(events) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                    contentHeight: 400,
+                    defaultDate: new Date(),
+                    timeFormat: 'HH:mm',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay,agenda'
+                    },
+                    locale: 'tr',
+                    eventLimit: true,
+                    eventColor: '#378006',
+                    events: events,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
+                        $('#myModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        // $description.append($('<p/>').html('<b>Salon Adı:</b>' + calEvent.roomName));
+                        $description.append($('<p/>').html('<b>Başlangıç Tarihi: </b>' + calEvent.start.format("DD.MM.YYYY HH:mm")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b>Bitiş Tarihi: </b>' + calEvent.end.format("DD.MM.YYYY HH:mm")));
+                        }
+                        $description.append($('<p/>').html('<b>Toplantı Bilgisi: </b>' + calEvent.description));
+                        $('#myModal #pDetails').empty().html($description);
+
+                        $('#myModal').modal();
+                    },
+                    selectable: true,
+                    select: function (start, end) {
+                        selectedEvent = {
+                            eventID: 0,
+                            roomID: 0,
+                            // roomName:'',
+                            title: '',
+                            description: '',
+                            start: start,
+                            end: end,
+                            allDay: false,
+                            color: ''
+                        };
+                        openAddEditForm();
+                        $('#calendar').fullCalendar('unselect');
+                    },
+                    editable: true,
+                    eventDrop: function (event) {
+                        var data = {
+                            RoomID: event.roomID,
+                            //  RoomName: event.roomName,
+                            EventID: event.eventID,
+                            Subject: event.title,
+                            Start: event.start.format('DD.MM.YYYY HH:mm'),
+                            End: event.end != null ? event.end.format('DD.MM.YYYY HH:mm') : null,
+                            Description: event.description,
+                            ThemeColor: event.color,
+                            IsFullDay: event.allDay
+                        };
+                        SaveEvent(data);
+                    }
+                })
+            }
+
+            $('#btnEdit').click(function () {
+                //Open modal dialog for edit event
+                openAddEditForm();
+            })
+            $('#btnDelete').click(function () {
+                if (selectedEvent != null && confirm('Toplantı kaydı silinsin mi?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/home/DeleteEvent',
+                        data: { 'eventID': selectedEvent.eventID },
+                        success: function (data) {
+                            if (data.status) {
+                                //Refresh the calender
+                                FetchEventAndRenderCalendar();
+                                $('#myModal').modal('hide');
+                            }
+                            else {
+                                alert(data.message)
+                            }
+                        },
+                        error: function () {
+                            alert('Failed');
+                        }
+                    })
+                }
+            })
+            $('#dtp1,#dtp2').datetimepicker({
+                locale: 'tr',
+                format: 'DD.MM.YYYY HH:mm'
+            });
+
+            $('#chkIsFullDay').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#divEndDate').hide();
+                }
+                else {
+                    $('#divEndDate').show();
+                }
+            });
+            function openAddEditForm() {
+                if (selectedEvent != null) {
+                    $('#RoomId').val(selectedEvent.roomID);
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    $('#txtSubject').val(selectedEvent.title);
+                    $('#txtStart').val(selectedEvent.start.format('DD.MM.YYYY HH:mm'));
+                    $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
+                    $('#chkIsFullDay').change();
+                    $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD.MM.YYYY HH:mm') : '');
+                    $('#txtDescription').val(selectedEvent.description);
+                    //$('#ddThemeColor').val(selectedEvent.color);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+            $('#btnSave').click(function () {
+                //Validation/
+                if ($('#txtSubject').val().trim() == "") {
+                    alert('Toplantı Konusu Giriniz');
+                    return;
+                }
+                if ($('#txtStart').val().trim() == "") {
+                    alert('Başlangıç Tarihi Giriniz');
+                    return;
+                }
+                if ($('#chkIsFullDay').is(':checked') == false && $('#txtEnd').val().trim() == "") {
+                    alert('Bitiş Tarihi Giriniz');
+                    return;
+                }
+                else {
+                    var startDate = moment($('#txtStart').val(), "DD.MM.YYYY HH:mm").toDate();
+                    var endDate = moment($('#txtEnd').val(), "DD.MM.YYYY HH:mm").toDate();
+                    if (startDate > endDate) {
+                        alert('Başlangıç bitiş tarihinden büyük olamaz');
+                        return;
+                    }
+                }
+
+                var data = {
+                    RoomId: $('#RoomId').val(),
+                    EventId: $('#hdEventID').val(),
+                    EventSubject: $('#txtSubject').val().trim(),
+                    StartDate: $('#txtStart').val().trim(),
+                    EndDate: $('#chkIsFullDay').is(':checked') ? null : $('#txtEnd').val().trim(),
+                    EventInfo: $('#txtDescription').val(),
+                    ThemeColor: 'orange',
+                    IsFullDay: $('#chkIsFullDay').is(':checked')
+                }
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/home/SaveEvent',
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                        else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Failed SaveEvent');
+                    }
+                })
+            }
+        })
+    </script>
+}

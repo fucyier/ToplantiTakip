@@ -1,0 +1,46 @@
+﻿@model ToplantiTakip.Domain.Concrete.Department
+
+@{
+    ViewBag.Title = "Detaylar";
+}
+
+<h2>Detay</h2>
+
+<div>
+    <h4></h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DepartmentName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DepartmentName)
+        </dd>
+
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DepartmentInfo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DepartmentInfo)
+        </dd>
+
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DepartmentAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DepartmentAddress)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Güncelle", "Edit", new { id = Model.DepartmentId }) |
+    @Html.ActionLink("Listeye Dön", "Index")
+</p>

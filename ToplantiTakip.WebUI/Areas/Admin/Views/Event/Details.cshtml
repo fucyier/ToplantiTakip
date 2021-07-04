@@ -1,0 +1,81 @@
+﻿@model ToplantiTakip.Domain.Concrete.Event
+
+@{
+    ViewBag.Title = "Detaylar";
+}
+
+<h2>Detaylar</h2>
+
+<div>
+    <h4>Toplantı Talebi Detayı</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Room.RoomName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Room.RoomName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EventSubject)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EventSubject)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EventInfo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EventInfo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReservationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReservationDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EventDocument)
+        </dt>
+
+        <dd>
+            @if (Model.EventDocument == null)
+            {
+                <div>Doküman yok.</div>
+            }
+            else
+            {
+                <img class="img-thumbnail" width="150" height="150"
+                     src="@Url.Action("GetImage", "Event", new { Model.EventId })" />
+            }
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Listeye Dön", "Index") | @Html.ActionLink("Güncelle", "Edit", new { id = Model.EventId })
+</p>

@@ -1,0 +1,66 @@
+﻿@model ToplantiTakip.WebUI.Areas.Admin.Models.EventModels.EventsAdminListViewModel
+@using ToplantiTakip.WebUI.HTMLHelpers;
+@{
+    ViewBag.Title = "Toplantı Talep İşlemleri";
+}
+
+<h2>Toplantı Talepleri</h2>
+
+<p>
+    @Html.ActionLink("Yeni Toplantı", "Create", "Event", new { area = "Admin" }, null)
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Birim Adı")
+        </th>
+        <th>
+            @Html.DisplayName("Salon Adı")
+        </th>
+        <th>
+            @Html.DisplayName("Toplantı Konusu")
+        </th>
+        <th>
+            @Html.DisplayName("Başlangıç Tarihi")
+        </th>
+        <th>
+            @Html.DisplayName("Bitiş Tarihi")
+        </th>
+        <th>
+            @Html.DisplayName("Onay Durum")
+        </th>
+
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Events)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Room.Department.DepartmentName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Room.RoomName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EventSubject)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StartDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EndDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.ActionLink("Güncelle", "Edit", new { id = item.EventId }) |
+            @Html.ActionLink("Detay", "Details", new { id = item.EventId }) |
+            @Html.ActionLink("Sil", "Delete", new { id = item.EventId })
+        </td>
+    </tr>
+    }
+</table>
+<ul class="pagination">
+    @Html.PageLinks(Model.PagingInfo, x => Url.Action("Index", new { page = x }))
+</ul>

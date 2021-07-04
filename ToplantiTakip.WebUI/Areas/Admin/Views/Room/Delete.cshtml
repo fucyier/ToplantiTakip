@@ -1,0 +1,82 @@
+﻿@model ToplantiTakip.Domain.Concrete.Room
+
+@{
+    ViewBag.Title = "Sil";
+}
+
+<h2>Toplantı Salonu Silme</h2>
+@using (Html.BeginForm())
+{@Html.AntiForgeryToken()
+
+<h3>Toplantı Salonunu Silmek İstediğinizden emin misiniz?</h3>
+<div>
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.RoomId)
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomInfo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomInfo)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomCapacity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomCapacity)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Resim")
+        </dt>
+
+        <dd>
+            @if (Model.RoomImage == null)
+            {
+                <div>Resim Yok.</div>
+            }
+            else
+            {
+                <img class="img-thumbnail" width="150" height="150"
+                     src="@Url.Action("GetImage", "Room",
+                        new { Model.RoomId })" />
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RoomStatus)
+        </dd>
+
+    </dl>
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Sil" class="btn btn-default" /> |
+        @Html.ActionLink("Listeye Dön", "Index")
+    </div>
+</div>
+}
+
+

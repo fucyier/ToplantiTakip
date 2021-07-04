@@ -1,0 +1,64 @@
+﻿
+@model  ToplantiTakip.WebUI.Areas.Admin.Models.RoomModels.RoomsAdminListViewModel
+@using ToplantiTakip.WebUI.HTMLHelpers;
+@{
+    ViewBag.Title = "Toplantı Salonları Listesi";
+}
+
+<h2>Toplantı Salonları Listesi</h2>
+
+<p>
+    @Html.ActionLink("Yeni Salon", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Birim Adı")
+        </th>
+        <th>
+            @Html.DisplayName("Toplantı Salonu Adı")
+        </th>
+        <th>
+            @Html.DisplayName("Salon Oda No")
+        </th>
+        <th>
+            @Html.DisplayName("Salon Kapasitesi")
+        </th>
+        <th>
+            @Html.DisplayName("Salon Durumu")
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Rooms)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Department.DepartmentName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RoomName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RoomAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RoomCapacity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RoomStatus)
+        </td>
+
+
+        <td>
+            @Html.ActionLink("Güncelle", "Edit", new { id = item.RoomId }) |
+            @Html.ActionLink("Detay", "Details", new { id = item.RoomId }) |
+            @Html.ActionLink("Sil", "Delete", new { id = item.RoomId })
+        </td>
+    </tr>
+    }
+
+</table>
+<ul class="pagination">
+    @Html.PageLinks(Model.PagingInfo, x => Url.Action("Index", new { page = x }))
+</ul>

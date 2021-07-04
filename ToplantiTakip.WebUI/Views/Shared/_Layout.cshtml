@@ -1,0 +1,80 @@
+﻿@using ToplantiTakip.WebUI.Infrastructure
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Toplantı Takip Sistemi</title>
+    @*<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />*@
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    @*<style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+
+            /* Set padding to keep content from hitting the edges */
+            .body-content {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            /* Set width on the form input elements since they're 100% wide by default */
+            input,
+            select,
+            textarea {
+                max-width: 280px;
+            }
+        </style>*@
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Ana Sayfa", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Toplantılarım", "Index", "Event", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="pull-right">
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @Html.ActionLink(User.Identity.GetFullName(), "Manage", "Account", new { area = "" }, new { @class = "navbar-brand" })
+                        }
+                        else
+                        {
+
+                        }
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        @Html.ActionLink("Çıkış", "LogOff", "Account", new { area = "" }, new { @class = "navbar-brand" })
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Toplantı Takip Sistemi</p>
+        </footer>
+    </div>
+
+    <script src="~/Scripts/jquery-2.2.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @RenderSection("Scripts", false)
+    @*<script src="~/Contents/Themes/ckeditor/ckeditor.js"></script>*@
+    @*<script>
+        CKEDITOR.replace("txtDescription");
+    </script>*@
+</body>
+</html>
